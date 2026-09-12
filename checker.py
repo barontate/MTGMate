@@ -1,15 +1,17 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
-from PyQt6.QtCore import QThread, pyqtSignal, QMutex, QWaitCondition
+import configparser
+import csv
+import os
+from time import sleep, time
+
+import numpy as np
+import requests
 from PyQt6 import uic
+from PyQt6.QtCore import QMutex, QThread, QWaitCondition, pyqtSignal
+from PyQt6.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from time import sleep, time
-import csv
-import requests
-import numpy as np
-import configparser
-import os
+
 
 class WorkerThread(QThread):
     progress_update = pyqtSignal(int)
