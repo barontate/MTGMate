@@ -1,1 +1,5 @@
 .venv/
+config.ini
+MTGMate.code-workspace
+pyproject.toml
+.vscode/settings.json
