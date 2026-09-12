@@ -1,4 +1,4 @@
-hey babes
+hey babes ✨
 
 when you run the mtgmate checker, it should open a little window to type your detials into, and select the collection.
 you can select if you want it to subtract a number from cards to sell, for example if you want to keep 1 of each card, and attempt to sell the rest.
