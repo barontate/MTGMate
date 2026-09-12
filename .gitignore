@@ -3,3 +3,6 @@ config.ini
 MTGMate.code-workspace
 pyproject.toml
 .vscode/settings.json
+__pycache__/
+*.py[cod]
+*$py.class
