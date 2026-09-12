@@ -1,3 +1,4 @@
+
 import csv
 from time import sleep, time
 
@@ -7,7 +8,6 @@ from PyQt6.QtCore import QMutex, QThread, QWaitCondition, pyqtSignal
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-
 
 class WorkerThread(QThread):
     progress_update = pyqtSignal(int)
@@ -249,4 +249,3 @@ class WorkerThread(QThread):
         with open("output.csv", mode="w", newline="") as file:
             writer = csv.writer(file)
             writer.writerows(buylist)
-

@@ -4,7 +4,7 @@ import os
 from PyQt6 import uic
 from PyQt6.QtWidgets import QFileDialog, QMainWindow, QMessageBox
 
-from checker import WorkerThread
+from workers.checker_worker import WorkerThread
 
 #saved details of user for later            
 config = configparser.ConfigParser()
