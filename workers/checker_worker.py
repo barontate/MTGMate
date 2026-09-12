@@ -2,15 +2,17 @@
 import csv
 from time import sleep, time
 
-import numpy as np
 import requests
 from PyQt6.QtCore import QMutex, QThread, QWaitCondition, pyqtSignal
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+
 class WorkerThread(QThread):
     progress_update = pyqtSignal(int)
+    speed_update = pyqtSignal(float)
+    log_update = pyqtSignal(str)
     show_full_message = pyqtSignal()
 
     def __init__(self):
@@ -24,8 +26,6 @@ class WorkerThread(QThread):
         self.password = password
         self.collection_path = collection_path
         self.spare_quantity = int(spare_quantity)
-        self.logBox = logBox
-        self.itemsPerSec = itemsPerSec
         self.collection = []
         self.cards = []
         self.log = []
@@ -33,11 +33,7 @@ class WorkerThread(QThread):
     #code for updating the log box in the UI    
     def update_log_box(self, text):
         self.log.append(text)
-        full_text = ''
-        for entry in self.log:
-            full_text += '\n' + entry
-            
-        self.logBox.setText(full_text)
+        self.log_update.emit(text)
         
     #code for resuming after maximum buylist was reached and emptied
     def resume(self):
@@ -114,11 +110,8 @@ class WorkerThread(QThread):
                 break
             
             #updates progress bar
-            self.progress_update.emit(int(((i+1)/len(self.cards))*100))
-            try:
-                self.itemsPerSec.setText(str(np.round((i+1)/(time()-begin_time),2)) + " items per second.")
-            except:
-                pass
+            speed = (i + 1) / (time() - begin_time)
+            self.speed_update.emit(round(speed, 2))
 
             #checks to make sure buylist is not full
             try:

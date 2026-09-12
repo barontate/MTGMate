@@ -66,7 +66,22 @@ class MainWindow(QMainWindow):
 
         #creates the worker thread and runs code with details given
         self.worker = WorkerThread()
-        self.worker.details(username, password, collection_path, spare_quantity, self.logBox, self.itemsPerSec)
+        self.worker.details(username,
+                            password,
+                            collection_path,
+                            spare_quantity,
+                            self.logBox,
+                            self.itemsPerSec)
         self.worker.progress_update.connect(self.progressBar.setValue)
+        self.worker.log_update.connect(self.update_log)
+        self.worker.speed_update.connect(self.update_speed)
         self.worker.show_full_message.connect(self.max_reached)
         self.worker.start()
+
+    def update_log(self, text):
+        self.logBox.setText(
+            self.logBox.text() + "\n" + text
+        )
+
+    def update_speed(self, speed):
+        self.itemsPerSec.setText(f"{speed} items per second.")
