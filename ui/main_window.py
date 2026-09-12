@@ -29,7 +29,8 @@ class MainWindow(QMainWindow):
             self.rememberBox.setChecked(True)
 
         #connects buttons
-        self.goButton.pressed.connect(self.go)
+        self.findCardsButton.pressed.connect(self.find_cards)
+        self.addBuylistButton.pressed.connect(self.add_found_cards)
         self.browseButton.pressed.connect(self.browse_file)
     
     #for collection file browsing
@@ -52,7 +53,7 @@ class MainWindow(QMainWindow):
             self.worker.resume()
     
     #runs the checking code when GO is pushed   
-    def go(self):
+    def add_found_cards(self):
         username = self.usernameBox.text()
         password = self.passwordBox.text()
         spare_quantity = self.spareBox.text()
@@ -77,6 +78,9 @@ class MainWindow(QMainWindow):
         self.worker.speed_update.connect(self.update_speed)
         self.worker.show_full_message.connect(self.max_reached)
         self.worker.start()
+
+    def find_cards(self):
+        print("Find Cards pressed")
 
     def update_log(self, text):
         self.logBox.setText(

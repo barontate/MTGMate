@@ -179,9 +179,16 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="goButton">
+     <widget class="QPushButton" name="findCardsButton">
       <property name="text">
-       <string>Go</string>
+       <string>Find Cards</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="addBuylistButton">
+      <property name="text">
+       <string>Add Found Cards to Buylist</string>
       </property>
      </widget>
     </item>
