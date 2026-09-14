@@ -1,19 +1,18 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
-from PyQt6.QtCore import QThread, pyqtSignal, QMutex, QWaitCondition
-from PyQt6 import uic
-import sys
+
+import csv
+from time import sleep, time
+
+import requests
+from PyQt6.QtCore import QMutex, QThread, QWaitCondition, pyqtSignal
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from time import sleep, time
-import csv
-import requests
-import numpy as np
-import configparser
-import os
+
 
 class WorkerThread(QThread):
     progress_update = pyqtSignal(int)
+    speed_update = pyqtSignal(float)
+    log_update = pyqtSignal(str)
     show_full_message = pyqtSignal()
 
     def __init__(self):
@@ -27,8 +26,6 @@ class WorkerThread(QThread):
         self.password = password
         self.collection_path = collection_path
         self.spare_quantity = int(spare_quantity)
-        self.logBox = logBox
-        self.itemsPerSec = itemsPerSec
         self.collection = []
         self.cards = []
         self.log = []
@@ -36,11 +33,7 @@ class WorkerThread(QThread):
     #code for updating the log box in the UI    
     def update_log_box(self, text):
         self.log.append(text)
-        full_text = ''
-        for entry in self.log:
-            full_text += '\n' + entry
-            
-        self.logBox.setText(full_text)
+        self.log_update.emit(text)
         
     #code for resuming after maximum buylist was reached and emptied
     def resume(self):
@@ -117,11 +110,8 @@ class WorkerThread(QThread):
                 break
             
             #updates progress bar
-            self.progress_update.emit(int(((i+1)/len(self.cards))*100))
-            try:
-                self.itemsPerSec.setText(str(np.round((i+1)/(time()-begin_time),2)) + " items per second.")
-            except:
-                pass
+            speed = (i + 1) / (time() - begin_time)
+            self.speed_update.emit(round(speed, 2))
 
             #checks to make sure buylist is not full
             try:
@@ -252,77 +242,3 @@ class WorkerThread(QThread):
         with open("output.csv", mode="w", newline="") as file:
             writer = csv.writer(file)
             writer.writerows(buylist)
-
-#saved details of user for later            
-config = configparser.ConfigParser()
-
-#main UI window code
-class MainWindow(QMainWindow):
-    
-    def __init__(self):
-        #creates window
-        super().__init__()
-        uic.loadUi('mainwindow.ui', self)
-        self.resize(600, 450)
-        self.setContentsMargins(20,20,20,20)
-
-        #opens config file if it exists
-        if os.path.exists("config.ini"):
-            config.read("config.ini")
-            self.usernameBox.setText(config["Info"]["username"])
-            self.passwordBox.setText(config["Info"]["password"]) 
-            self.collectionPath.setText(config["Info"]["path"]) 
-            self.rememberBox.setChecked(True)
-
-        #connects buttons
-        self.goButton.pressed.connect(self.go)
-        self.browseButton.pressed.connect(self.browse_file)
-    
-    #for collection file browsing
-    def browse_file(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select a File", "", "CSV Files (*.csv);;All Files (*)")
-        if file_path:
-            self.collectionPath.setText(file_path)
-
-    #creating maximum buylist message        
-    def max_reached(self):
-        msg_box = QMessageBox()
-        msg_box.setWindowTitle("Maximum Buylist amount reached!")
-        msg_box.setText("The maximum Buylist order size (300 cards) has been reached. Please submit this buylist order THEN push OK.")
-        msg_box.setIcon(QMessageBox.Icon.Warning)
-        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
-
-        #wait for OK to be pushed
-        response = msg_box.exec()
-        if response == QMessageBox.StandardButton.Ok:
-            self.worker.resume()
-    
-    #runs the checking code when GO is pushed   
-    def go(self):
-        username = self.usernameBox.text()
-        password = self.passwordBox.text()
-        spare_quantity = self.spareBox.text()
-        collection_path = self.collectionPath.text()
-
-        #saves config file if requested
-        config["Info"] = {"username": username, "password": password, "path": collection_path}
-        if self.rememberBox.isChecked():
-            with open("config.ini", "w") as configfile:
-                config.write(configfile)
-
-        #creates the worker thread and runs code with details given
-        self.worker = WorkerThread()
-        self.worker.details(username, password, collection_path, spare_quantity, self.logBox, self.itemsPerSec)
-        self.worker.progress_update.connect(self.progressBar.setValue)
-        self.worker.show_full_message.connect(self.max_reached)
-        self.worker.start()
-        
-if not QApplication.instance():
-    app = QApplication(sys.argv)
-else:
-    app = QApplication.instance()
-if __name__ == "__main__":    
-    app.setStyle('windowsvista')
-    main = MainWindow()
-    main.show()
-    app.exec()

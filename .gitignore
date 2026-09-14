@@ -1,0 +1,18 @@
+# Environments and python files
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+#VSCode
+.vscode/settings.json
+MTGMate.code-workspace
+
+# Secrets
+config.ini
+
+# Linting and project settings
+pyproject.toml
+
+# buylist output
+output.csv
