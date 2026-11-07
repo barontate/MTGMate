@@ -1,18 +1,37 @@
-# Environments and python files
+# Environments
 .venv/
+.env
+.env.*
+!.env.example
+.direnv/
+
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
+*.egg-info/
+build/
+dist/
 
-#VSCode
-.vscode/settings.json
-MTGMate.code-workspace
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
 
-# Secrets
-config.ini
+# Notebooks
+.ipynb_checkpoints/
 
-# Linting and project settings
-pyproject.toml
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
 
-# buylist output
-output.csv
+# --- MTGMate-checker: secrets and personal data (never commit) ---
+# Live mtgmate login session (cookies) and the old plaintext-credentials file
+mtgmate_cookies.json
+mtgmate_credentials.txt
+# Saved UI settings (the "Remember" checkbox): paths on this machine
+mtgmate_settings.json
+# Collection exports and results files (personal data); old project ignored all CSVs too
+*.csv

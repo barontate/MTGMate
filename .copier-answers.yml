@@ -1,0 +1,12 @@
+# Changes here will be overwritten by Copier. Do not edit manually.
+_commit: v0.1.0
+_src_path: gh:barontate/python-template
+author_email: stuggitg4@gmail.com
+author_name: Tate
+description: Looks at cards that MTGMate wants to buy from your collection
+package_name: mtgmate_checker
+project_name: MTGMate-checker
+python_version: '3.12'
+use_claude_commits: false
+use_mypy: true
+use_notebooks: false

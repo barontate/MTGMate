@@ -1,5 +1,5 @@
-numpy>=1.26.0
-PyQt6==6.8.1
-PyQt6_sip==13.10.0
-Requests==2.32.3
-selenium==4.29.0
+textual==8.2.8
+requests==2.32.3
+beautifulsoup4>=4.12
+# only needed for the one-off `login` step (helpers/auth.py)
+playwright>=1.45
