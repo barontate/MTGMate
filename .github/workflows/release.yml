@@ -1,0 +1,50 @@
+name: Release
+
+# Pushing a tag like v1.2.3 builds mtgmate-checker.exe and attaches it to a GitHub release.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Check the tag matches the package version
+        run: |
+          version=$(uv run python -c "import mtgmate_checker; print(mtgmate_checker.__version__)")
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package version $version"
+            exit 1
+          fi
+
+      - name: Tests
+        run: uv run pytest
+
+      - name: Build the .exe
+        run: bash scripts/build_exe.sh
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/mtgmate-checker.exe --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/mtgmate-checker.exe \
+              --title "MTGMate-checker ${GITHUB_REF_NAME#v}" --generate-notes
+          fi
