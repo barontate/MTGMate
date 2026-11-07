@@ -1,0 +1,5 @@
+textual==8.2.8
+requests==2.32.3
+beautifulsoup4>=4.12
+# only needed for the one-off `login` step (helpers/auth.py)
+playwright>=1.45
