@@ -104,3 +104,11 @@ uv add <package>                      # add a dependency
 - `CLAUDE.md` has the architecture, a log of what's changed, and the to-do list
 - secrets that must never be shared or committed: `mtgmate_cookies.json` (a live login) and `mtgmate_settings.json` (both are git-ignored)
 - project created from [barontate/python-template](https://github.com/barontate/python-template) with copier; `uvx copier update --trust` pulls in template updates
+
+## Windows executable
+
+Download `mtgmate-checker.exe` from the [Releases](https://github.com/barontate/MTGMate/releases)
+page and run it from a terminal (or double-click it). Cookies, settings and result CSVs are saved
+in the folder that contains the `.exe`. The first **Log in** downloads Firefox for the sign-in window.
+
+To build it yourself: `bash scripts/build_exe.sh` (output: `dist/mtgmate-checker.exe`).

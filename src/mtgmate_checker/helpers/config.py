@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 BASE_URL = "https://www.mtgmate.com.au"
@@ -19,11 +20,13 @@ CSRF_SOURCE_PATH = "/cards/buylist_search?q=Forest"
 # -- it's public, so it can't tell whether a session is valid.)
 LOGIN_CHECK_PATH = "/users/edit"
 
-# Anchored to the project folder so saved logins / bundled UI files are found
-# no matter which directory the app is launched from.
-PROJECT_ROOT = (
-    Path(__file__).resolve().parents[3]
-)  # src/mtgmate_checker/helpers/config.py -> project root
+# Where runtime data (login cookies, saved settings, results CSVs) lives. From a checkout this
+# is the project folder; in the packaged .exe it is the folder containing the .exe, so the
+# data stays next to the program no matter which directory it is launched from.
+if getattr(sys, "frozen", False):
+    PROJECT_ROOT = Path(sys.executable).resolve().parent
+else:
+    PROJECT_ROOT = Path(__file__).resolve().parents[3]  # src/mtgmate_checker/helpers/config.py
 _HERE = PROJECT_ROOT  # backwards-compatible alias
 # Gitignored: holds a live session.
 COOKIE_JAR_PATH = PROJECT_ROOT / "mtgmate_cookies.json"
