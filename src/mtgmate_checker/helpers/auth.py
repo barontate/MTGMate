@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime
 from typing import TYPE_CHECKING
 
@@ -34,14 +35,38 @@ def saved_login_time() -> datetime | None:
         return None
 
 
+def _install_firefox() -> bool:
+    """Download Playwright's Firefox using the driver bundled with the playwright package.
+
+    Works from source and from the packaged .exe (where there is no `playwright` command).
+    """
+    import subprocess
+
+    from playwright._impl._driver import compute_driver_executable, get_driver_env
+
+    print("Firefox for the login window isn't installed yet. Downloading it (one-off)...")
+    node, cli = compute_driver_executable()
+    result = subprocess.run([node, cli, "install", "firefox"], env=get_driver_env(), check=False)
+    return result.returncode == 0
+
+
 def login_and_save_cookies(headless: bool = False) -> bool:
     """Interactive login; returns True if cookies were saved."""
     # Imported lazily: Playwright is only needed for this one-off step, so the
     # GUI/check path doesn't require it to be installed.
     from playwright.sync_api import sync_playwright
 
+    if config.BROWSERS_PATH is not None:
+        # Must be set before the driver starts; both the launch and the install read it.
+        os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", str(config.BROWSERS_PATH))
+
     with sync_playwright() as p:
-        browser = p.firefox.launch(headless=headless)
+        try:
+            browser = p.firefox.launch(headless=headless)
+        except Exception as exc:
+            if "Executable doesn't exist" not in str(exc) or not _install_firefox():
+                raise
+            browser = p.firefox.launch(headless=headless)
         context = browser.new_context()
         page = context.new_page()
         page.goto(config.LOGIN_URL)
