@@ -1,6 +1,6 @@
 [project]
 name = "MTGMate-checker"
-version = "1.0.0"
+version = "1.0.1"
 description = "Looks at cards that MTGMate wants to buy from your collection"
 readme = "README.md"
 requires-python = ">=3.12"

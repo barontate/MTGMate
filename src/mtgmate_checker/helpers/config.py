@@ -31,6 +31,16 @@ _HERE = PROJECT_ROOT  # backwards-compatible alias
 # Gitignored: holds a live session.
 COOKIE_JAR_PATH = PROJECT_ROOT / "mtgmate_cookies.json"
 
+# Where Playwright keeps its Firefox. In the packaged .exe Playwright's default is inside
+# PyInstaller's temp folder (_MEI...), which is deleted on exit, so use a permanent one.
+# None = leave Playwright's default (running from a checkout).
+if getattr(sys, "frozen", False):
+    BROWSERS_PATH: Path | None = (
+        Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "mtgmate-checker" / "browsers"
+    )
+else:
+    BROWSERS_PATH = None
+
 REQUEST_TIMEOUT = 15
 # How many sets are fetched/matched at once. The shared rate limiters below still
 # cap the *overall* request rate, so this overlaps waiting time without raising it.

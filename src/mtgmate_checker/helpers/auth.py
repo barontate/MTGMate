@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime
 from typing import TYPE_CHECKING
 
@@ -54,6 +55,10 @@ def login_and_save_cookies(headless: bool = False) -> bool:
     # Imported lazily: Playwright is only needed for this one-off step, so the
     # GUI/check path doesn't require it to be installed.
     from playwright.sync_api import sync_playwright
+
+    if config.BROWSERS_PATH is not None:
+        # Must be set before the driver starts; both the launch and the install read it.
+        os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", str(config.BROWSERS_PATH))
 
     with sync_playwright() as p:
         try:
