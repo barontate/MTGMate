@@ -107,7 +107,7 @@ uv add <package>                      # add a dependency
 
 ## Windows executable
 
-Download `mtgmate-checker.exe` from the [Releases](https://github.com/barontate/MTGMate/releases)
+Download `mtgmate-checker-<version>.exe` from the [Releases](https://github.com/barontate/MTGMate/releases)
 page and run it from a terminal (or double-click it). Cookies, settings and result CSVs are saved
 in the folder that contains the `.exe`. The first **Log in** downloads Firefox for the sign-in window.
 

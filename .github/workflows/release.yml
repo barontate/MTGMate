@@ -42,9 +42,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          exe="dist/mtgmate-checker-${GITHUB_REF_NAME#v}.exe"
+          mv dist/mtgmate-checker.exe "$exe"
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh release upload "$GITHUB_REF_NAME" dist/mtgmate-checker.exe --clobber
+            gh release upload "$GITHUB_REF_NAME" "$exe" --clobber
           else
-            gh release create "$GITHUB_REF_NAME" dist/mtgmate-checker.exe \
+            gh release create "$GITHUB_REF_NAME" "$exe" \
               --title "MTGMate-checker ${GITHUB_REF_NAME#v}" --generate-notes
           fi
